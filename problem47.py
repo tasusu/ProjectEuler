@@ -16,26 +16,15 @@ What is the first of these numbers?
 
 import intlib
 
-def prime_factors(n, primes, primes_set):
-    if n in primes_set: return {n}
-    ans = set()
-    for p in primes:
-        if p > n: break
-        if n % p == 0:
-            ans.add(p)
-            n = n // p
-    return ans
-
 def main():
-    _max = 10 ** 6
-    primes = intlib.primes(_max)
-    primes_set = set(primes)
+    max_ = 10**6
+    primes = intlib.Primes(max_)
     
     i = 1
-    while i + 4 < _max:
+    while i + 4 < max_:
         flag = True
         for j in (3,2,1,0):
-            if len(prime_factors(i + j, primes, primes_set)) != 4:
+            if len(primes.prime_factors(i + j)) != 4:
                 i = i + j + 1
                 flag = False
                 break

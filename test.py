@@ -4,10 +4,29 @@ Created on 2012/11/14
 @author: Tasuku
 '''
 import unittest
-from intlib import is_prime, primes, prime_iter, is_pandigit, is_square
+import itertools
+from intlib import is_prime, primes, prime_iter, is_pandigit, is_square, ith_prime
+from intlib import Primes
 
+class IntTest(unittest.TestCase):
+    
+    def setUp(self):
+        pass
+    
+    def test_is_pandigit(self):
+        counter = 1
+        for tpl in itertools.permutations('123456789'):
+            if counter > 10 ** 3: break
+            n = ''.join(tpl)
+            self.assertTrue(is_pandigit(n))
+            counter += 1
+        self.assertFalse(is_pandigit('112345678'))
+    
+    def test_is_square(self):
+        for i in range(1, 10**3):
+            self.assertTrue(is_square(i**2))
 
-class Test(unittest.TestCase):
+class PrimeTest(unittest.TestCase):
 
     def setUp(self):
         self.primes = [2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,
@@ -24,22 +43,33 @@ class Test(unittest.TestCase):
                        811,821,823,827,829,839,853,857,859,863,877,881,
                        883,887,907,911,919,929,937,941,947,953,967,971,
                        977,983,991,997]
+        
+        self.klass = Primes(10 ** 6)
+
+    def test_class_is_prime(self):
+        for p in self.primes:
+            self.assertTrue(self.klass.is_prime(p))
+            
+    def test_class_ith_prime(self):
+        for i, p in enumerate(self.primes):
+            self.assertEqual(p, self.klass.ith_prime(i + 1)) 
 
     def test_is_prime(self):
-        for p in self.primes:
+        for p in self.klass:
             self.assertTrue(is_prime(p))
             
     def test_primes(self):
-        ls = primes(10**5)
+        ls = primes(10 ** 5)
         for p in ls:
-            self.assertTrue(is_prime(p))
+            self.assertTrue(self.klass.is_prime(p))
             
     def test_prime_iter(self):
         for i, p in enumerate(prime_iter()):
-            if i > 10**5 : break
-            self.assertTrue(is_prime(p), msg = '{}'.format(p))
+            if i > 10**3 : break
+            self.assertTrue(self.klass.is_prime(p), msg = '{}'.format(p))
+            
+
 
 
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

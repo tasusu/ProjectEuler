@@ -1,5 +1,29 @@
 import math
+import itertools
 
+
+'''
+ 素数関係ない関数
+------------------------
+'''
+
+def is_pandigit(s):
+    '文字列sがpandigitかどうか調べる.'
+    if len(s) != 9: return False
+    s = set([a for a in s if a != '0'])
+    return len(s) == 9
+
+def is_square(x):
+    'xが平方数か調べる.'
+    if x < 0: return False
+    return math.floor(math.sqrt(x))**2 == x
+
+'''
+素数を扱う関数.
+これらの関数はO(1)回しか呼ばない, あるいは非有界な範囲の整数に対し実行するときに有効.
+有界な範囲で何回も呼ぶ場合は, 後述のPrimesクラスの方が速い.
+--------------------------
+'''
 def is_prime(n):
     'nが素数かどうか判定する. 定数回しか呼ばないときに有効.'
     if n <= 1:
@@ -12,6 +36,11 @@ def is_prime(n):
 def mark(s, x):
     for i in range(x + x, len(s), x):
         s[i] = False
+
+def ith_prime(i):
+    'i番目の素数を返す.'
+    for j, p in enumerate(prime_iter()):
+        if j == i - 1 : return p
 
 def primes(n):
     'n以下の素数のリストを返す.リストのinは遅いので注意.'
@@ -26,32 +55,12 @@ def prime_set(n):
 
 def prime_iter():
     '素数のジェネレータ. 無限に生成できるが遅い.'
-    yield 2
-    prime_ls = [2]
-    n = 3
+    g = itertools.count(2)
     while True:
-        flag = True
-        for p in prime_ls:
-            if p > int(math.floor(n**0.5)) + 1: break
-            if n % p == 0:
-                flag = False
-                break
-        if flag:
-            yield n
-            prime_ls.append(n)
-        n += 2
+        prime = next(g)
+        yield prime
+        g = filter(lambda x, prime = prime: x % prime, g)
     
-def is_pandigit(s):
-    '文字列sがpandigitかどうか調べる.'
-    if len(s) != 9: return False
-    s = set([a for a in s if a != '0'])
-    return len(s) == 9
-
-def is_square(x):
-    'xが平方数か調べる.'
-    if x < 0: return False
-    return math.floor(math.sqrt(x))**2 == x
-
 def prime_factors(n):
     'nの素因数のsetを返す. 定数回しか呼ばないときに有効.'
     if is_prime(n): return {n}
@@ -61,12 +70,73 @@ def prime_factors(n):
             ans.add(p)
             n = n // p
     return ans
+
+'''
+Primes クラス.
+1<=n<=max_ までの範囲の素数判定・素因数列挙・素数列挙を
+高速に行う. 範囲を超える数に対しては例外を発生させる.
+for文で範囲内の全素数に対して回すことも可能.
+--------------------------
+'''
+
+class Primes:
+    def __init__(self, max_ = 10**6):
+        self.max_ = max_
+        self.primes = primes(max_)
+        self.primes_set = set(self.primes)
+        
+    def is_prime(self, n):
+        '素数判定'
+        if n > self.max_ :
+            raise Exception('Range exceeded')
+        return n in self.primes_set
+    
+    def __contains__(self, n):
+        'Primes.is_prime(n) と等価.'
+        return self.is_prime(n)
+    
+    def __iter__(self):
+        'self._maxまでの素数のイテレータ'
+        return (p for p in self.primes)
+    
+    def prime_factors(self, n):
+        '素因数列挙'
+        if n > self.max_:
+            raise Exception('Range exceeded')
+        if self.is_prime(n): return {n}
+        ans = set()
+        for p in self.primes:
+            if p > n: break
+            if n % p == 0:
+                ans.add(p)
+                n = n // p
+        return ans
+    
+    def ith_prime(self, i):
+        'i番目の素数'
+        if i > len(self.primes):
+            raise Exception('Range exceeded')
+        else:
+            return self.primes[i - 1]
     
 if __name__ == '__main__':
-    print(is_prime(97))
-    print(is_prime(13*17))
-    print(primes(10**3))
-    for i, p in enumerate(prime_iter()):
-        if i > 10: break
-        print(p)
-    print(prime_factors(7))
+    print(ith_prime(3))
+    _max = 10**5
+    import time
+    t1 = time.time()
+    s = 0
+    for p in Primes(_max):
+        s += p
+    t2 = time.time()
+    print(s)
+    print('Primes: {}'.format(t2-t1))
+    t1 = time.time()
+    s = 0
+    for p in prime_iter():
+        if p > _max: break
+        s += p
+    t2 = time.time()
+    print(s)
+    print('Itertools: {}'.format(t2-t1))
+    
+    
