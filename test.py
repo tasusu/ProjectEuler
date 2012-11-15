@@ -69,7 +69,5 @@ class PrimeTest(unittest.TestCase):
             self.assertTrue(self.klass.is_prime(p), msg = '{}'.format(p))
             
 
-
-
 if __name__ == "__main__":
     unittest.main()
