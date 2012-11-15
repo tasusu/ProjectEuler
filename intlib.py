@@ -51,6 +51,16 @@ def is_square(x):
     'xが平方数か調べる.'
     if x < 0: return False
     return math.floor(math.sqrt(x))**2 == x
+
+def prime_factors(n):
+    'nの素因数のsetを返す. 定数回しか呼ばないときに有効.'
+    if is_prime(n): return {n}
+    ans = set()
+    for p in primes(n):
+        if n % p == 0:
+            ans.add(p)
+            n = n // p
+    return ans
     
 if __name__ == '__main__':
     print(is_prime(97))
@@ -59,3 +69,4 @@ if __name__ == '__main__':
     for i, p in enumerate(prime_iter()):
         if i > 10: break
         print(p)
+    print(prime_factors(7))
