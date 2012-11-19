@@ -45,14 +45,16 @@ def main(max_):
     for p in keys:
         if p > ans: break # pが暫定解を超えたら終了
         adj_p = sorted([x for x in adj[p] if x > p])
-        for q, r, s, t in itertools.combinations(adj_p, 4):
-            if p + q > ans: break # p+qが暫定解を超えたら終了
-            tpl = (p, q, r, s, t)
-            if is_clique(tpl, adj):
-                print(tpl, sum(tpl))
-                ans = min((ans, sum(tpl)))
+        for q in adj_p:
+            if len(adj[p] & adj[q]) < 3: continue #pとqの共通隣接点は3個以上必要
+            common_adj = sorted([x for x in adj[p] & adj[q] if x > q])
+            for r, s, t in itertools.combinations(common_adj, 3):
+                tpl = (p, q, r, s, t)
+                if is_clique(tpl, adj):
+                    print(tpl, sum(tpl))
+                    ans = min((ans, sum(tpl)))
     
-    return ans
+    if ans < max_: return ans #答えが確定する場合に返す
     
 if __name__ == '__main__':
-    print(main(10000)) 
+    print(main(30000)) 
