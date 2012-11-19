@@ -1,11 +1,22 @@
 import math
 import itertools
+import random
 
 
 '''
  素数関係ない関数
 ------------------------
 '''
+
+def sq_pow(a, power, mod):
+    'modつきのべき乗を高速に行う'
+    b = 1
+    while power:
+        if power & 1: #一番下のbitを見る
+            b = b * a % mod
+        power = power >> 1 #1ビットシフト
+        a = a ** 2 % mod
+    return b
 
 def is_pandigit(s):
     '文字列sがpandigitかどうか調べる.'
@@ -118,6 +129,30 @@ class Primes:
             raise Exception('Range exceeded')
         else:
             return self.primes[i - 1]
+        
+        
+'''
+Miller-Rabin乱択素数判定
+'''
+       
+def is_prime_rand(n, repeat = 5):
+    if n == 2: return True
+    if n == 1 or n % 2 == 0: return False
+    d = n - 1
+    s = 0
+    while d & 1 == 0:
+        s += 1
+        d = d >> 1
+    for i in range(repeat):
+        a = random.randint(1, n - 1)
+        y = sq_pow(a, d, n)
+        if y != 1:
+            j = 0
+            while y != n - 1 and j < s:
+                y = y * y % n
+                j += 1
+            if j == s: return False
+    return True
     
 if __name__ == '__main__':
     print(ith_prime(3))

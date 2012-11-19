@@ -7,6 +7,7 @@ import unittest
 import itertools
 from intlib import is_prime, primes, prime_iter, is_pandigit, is_square, ith_prime
 from intlib import Primes
+from intlib import is_prime_rand
 
 class IntTest(unittest.TestCase):
     
@@ -68,6 +69,9 @@ class PrimeTest(unittest.TestCase):
             if i > 10**3 : break
             self.assertTrue(self.klass.is_prime(p), msg = '{}'.format(p))
             
+    def test_is_prime_rand(self):
+        for p in self.klass:
+            self.assertTrue(is_prime_rand(p))
 
 if __name__ == "__main__":
     unittest.main()
