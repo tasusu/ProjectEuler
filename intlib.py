@@ -8,16 +8,6 @@ import random
 ------------------------
 '''
 
-def sq_pow(a, power, mod):
-    'modつきのべき乗を高速に行う'
-    b = 1
-    while power:
-        if power & 1: #一番下のbitを見る
-            b = b * a % mod
-        power = power >> 1 #1ビットシフト
-        a = a ** 2 % mod
-    return b
-
 def is_pandigit(s):
     '文字列sがpandigitかどうか調べる.'
     if len(s) != 9: return False
@@ -28,6 +18,12 @@ def is_square(x):
     'xが平方数か調べる.'
     if x < 0: return False
     return math.floor(math.sqrt(x))**2 == x
+
+def is_nth_power(x, n):
+    'xがn乗数か調べる.'
+    if x < 0: return False
+    return (math.floor(math.pow(x, 1/n)) ** n == x
+            or math.ceil(math.pow(x, 1/n)) ** n == x)
 
 '''
 素数を扱う関数.
@@ -44,6 +40,26 @@ def is_prime(n):
             return False
     return True
 
+def is_prime_rand(n, repeat = 5):
+    'Miller-Rabin素数判定法. repeatは繰り返し回数.'
+    if n == 2: return True
+    if n == 1 or n % 2 == 0: return False
+    d = n - 1
+    s = 0
+    while d & 1 == 0:
+        s += 1
+        d = d >> 1
+    for i in range(repeat):
+        a = random.randint(1, n - 1)
+        y = pow(a, d, n)
+        if y != 1:
+            j = 0
+            while y != n - 1 and j < s:
+                y = y * y % n
+                j += 1
+            if j == s: return False
+    return True
+
 def mark(s, x):
     for i in range(x + x, len(s), x):
         s[i] = False
@@ -55,7 +71,7 @@ def ith_prime(i):
 
 def primes(n):
     'n以下の素数のリストを返す.リストのinは遅いので注意.'
-    s = [True] * n
+    s = [True for i in range(n)]
     for x in range(2, int(n**0.5) + 1):
         if s[x]: mark(s, x)
     return [i for i in range(0,n) if s[i] and i > 1]
@@ -82,24 +98,22 @@ def prime_factors(n):
             n = n // p
     return ans
 
-'''
-Primes クラス.
-1<=n<=max_ までの範囲の素数判定・素因数列挙・素数列挙を
-高速に行う. 範囲を超える数に対しては例外を発生させる.
-for文で範囲内の全素数に対して回すことも可能.
---------------------------
-'''
-
 class Primes:
+    '''Primes クラス.　1<=n<=max_ までの範囲の素数判定・素因数列挙・素数列挙を
+        高速に行う. 範囲を超える数に対しては例外を発生させる.
+    for文で範囲内の全素数に対して回すことも可能.
+    '''
+
     def __init__(self, max_ = 10**6):
         self.max_ = max_
         self.primes = primes(max_)
         self.primes_set = set(self.primes)
+        self.exception = Exception('Range exceeded')
         
     def is_prime(self, n):
         '素数判定'
         if n > self.max_ :
-            raise Exception('Range exceeded')
+            raise self.exception
         return n in self.primes_set
     
     def __contains__(self, n):
@@ -113,7 +127,7 @@ class Primes:
     def prime_factors(self, n):
         '素因数列挙'
         if n > self.max_:
-            raise Exception('Range exceeded')
+            raise self.exception
         if self.is_prime(n): return {n}
         ans = set()
         for p in self.primes:
@@ -126,33 +140,9 @@ class Primes:
     def ith_prime(self, i):
         'i番目の素数'
         if i > len(self.primes):
-            raise Exception('Range exceeded')
+            raise self.exception
         else:
             return self.primes[i - 1]
-        
-        
-'''
-Miller-Rabin乱択素数判定
-'''
-       
-def is_prime_rand(n, repeat = 5):
-    if n == 2: return True
-    if n == 1 or n % 2 == 0: return False
-    d = n - 1
-    s = 0
-    while d & 1 == 0:
-        s += 1
-        d = d >> 1
-    for i in range(repeat):
-        a = random.randint(1, n - 1)
-        y = sq_pow(a, d, n)
-        if y != 1:
-            j = 0
-            while y != n - 1 and j < s:
-                y = y * y % n
-                j += 1
-            if j == s: return False
-    return True
     
 if __name__ == '__main__':
     print(ith_prime(3))

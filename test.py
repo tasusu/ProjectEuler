@@ -5,9 +5,7 @@ Created on 2012/11/14
 '''
 import unittest
 import itertools
-from intlib import is_prime, primes, prime_iter, is_pandigit, is_square, ith_prime
-from intlib import Primes
-from intlib import is_prime_rand
+from intlib import *
 
 class IntTest(unittest.TestCase):
     
@@ -24,8 +22,13 @@ class IntTest(unittest.TestCase):
         self.assertFalse(is_pandigit('112345678'))
     
     def test_is_square(self):
-        for i in range(1, 10**3):
-            self.assertTrue(is_square(i**2))
+        for x in range(1, 10**3):
+            self.assertTrue(is_square(x**2))
+            
+    def test_is_nth_power(self):
+        for x in range(1, 10**3):
+            for n in range(1, 100):
+                self.assertTrue(is_nth_power(x ** n, n))
 
 class PrimeTest(unittest.TestCase):
 
@@ -44,7 +47,6 @@ class PrimeTest(unittest.TestCase):
                        811,821,823,827,829,839,853,857,859,863,877,881,
                        883,887,907,911,919,929,937,941,947,953,967,971,
                        977,983,991,997]
-        
         self.klass = Primes(10 ** 6)
 
     def test_class_is_prime(self):
@@ -66,8 +68,8 @@ class PrimeTest(unittest.TestCase):
             
     def test_prime_iter(self):
         for i, p in enumerate(prime_iter()):
-            if i > 10**3 : break
-            self.assertTrue(self.klass.is_prime(p), msg = '{}'.format(p))
+            if i > 10**4 : break
+            self.assertTrue(self.klass.is_prime(p))
             
     def test_is_prime_rand(self):
         for p in self.klass:
