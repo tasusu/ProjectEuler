@@ -25,6 +25,20 @@ def is_nth_power(x, n):
     return (math.floor(math.pow(x, 1/n)) ** n == x
             or math.ceil(math.pow(x, 1/n)) ** n == x)
 
+def gcd(a, b):
+    'aとbの最大公約数'
+    if a > b: a, b = b, a
+    while a: a, b = b % a, a
+    return b
+
+def digit_sum(n):
+    'nの各桁の和'
+    ans = 0
+    while n:
+        ans += n % 10
+        n = n // 10
+    return ans
+
 '''
 素数を扱う関数.
 これらの関数はO(1)回しか呼ばない, あるいは非有界な範囲の整数に対し実行するときに有効.
