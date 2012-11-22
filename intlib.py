@@ -1,7 +1,7 @@
 import math
 import itertools
 import random
-
+import fractions
 
 '''
  素数関係ない関数
@@ -25,12 +25,6 @@ def is_nth_power(x, n):
     return (math.floor(math.pow(x, 1/n)) ** n == x
             or math.ceil(math.pow(x, 1/n)) ** n == x)
 
-def gcd(a, b):
-    'aとbの最大公約数'
-    if a > b: a, b = b, a
-    while a: a, b = b % a, a
-    return b
-
 def digit_sum(n):
     'nの各桁の和'
     ans = 0
@@ -38,6 +32,40 @@ def digit_sum(n):
         ans += n % 10
         n = n // 10
     return ans
+
+'''
+連分数
+--------------------------
+'''
+def cont_frac_sqrt(n):
+    '√nの連分数[a0;a1,a2,..]を次々に返すジェネレータを返す.'
+    if is_square(n): return [math.floor(n**0.5)]
+    before = []
+    a, m, d = math.floor(n**0.5), 0, 1 #a は常に (√n + m)//d の整数部分
+    ans = [a]
+    while (a, m, d) not in before:
+        before.append((a, m, d))
+        m = d * a - m
+        d = (n - m**2)//d
+        a = math.floor((ans[0] + m)//d)
+        ans.append(a)
+        
+    return cont_frac_gen(ans[:-1])
+
+def cont_frac_gen(cont_frac_ls):
+    '有限リスト [a0;a1,a2,..] で表される連分数をジェネレータに変換.'
+    yield cont_frac_ls[0]
+    for a in itertools.cycle(cont_frac_ls[1:]):
+        yield a
+
+def convergents(cont_frac):
+    'cont_fracで表現される連分数のconvergentを返すジェネレータ. 返り値はfraction.'
+    a0 = next(cont_frac)
+    h1, h2, k1, k2 = a0, 1, 1, 0
+    for ai in cont_frac:
+        yield fractions.Fraction(h1, k1)
+        h1, h2 = ai*h1 + h2, h1
+        k1, k2 = ai*k1 + k2, k1
 
 '''
 素数を扱う関数.
@@ -85,7 +113,7 @@ def ith_prime(i):
 
 def primes(n):
     'n以下の素数のリストを返す.リストのinは遅いので注意.'
-    s = [True for i in range(n)]
+    s = [True] * n
     for x in range(2, int(n**0.5) + 1):
         if s[x]: mark(s, x)
     return [i for i in range(0,n) if s[i] and i > 1]
@@ -159,23 +187,12 @@ class Primes:
             return self.primes[i - 1]
     
 if __name__ == '__main__':
-    print(ith_prime(3))
-    _max = 10**5
-    import time
-    t1 = time.time()
-    s = 0
-    for p in Primes(_max):
-        s += p
-    t2 = time.time()
-    print(s)
-    print('Primes: {}'.format(t2-t1))
-    t1 = time.time()
-    s = 0
-    for p in prime_iter():
-        if p > _max: break
-        s += p
-    t2 = time.time()
-    print(s)
-    print('Itertools: {}'.format(t2-t1))
+    n = 2
+    cont_frac = cont_frac_sqrt(n)
+    for r in convergents(cont_frac):
+        if abs(r - n**0.5) < 1e-10: break
+        p = r.numerator
+        q = r.denominator
+        print(r, p/q, n**0.5 - p/q)
     
     

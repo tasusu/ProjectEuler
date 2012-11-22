@@ -68,7 +68,7 @@ class PrimeTest(unittest.TestCase):
             
     def test_prime_iter(self):
         for i, p in enumerate(prime_iter()):
-            if i > 10**4 : break
+            if i > 10**3 : break
             self.assertTrue(self.klass.is_prime(p))
             
     def test_is_prime_rand(self):
