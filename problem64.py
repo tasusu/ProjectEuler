@@ -21,4 +21,8 @@ def main():
                 if not is_square(n) and cycle(n) % 2))
     
 if __name__ == '__main__':
+    import time
+    t1 = time.time()
     print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))

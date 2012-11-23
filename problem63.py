@@ -25,5 +25,9 @@ def main():
     return len(ans) + 1 #1**1の分を忘れずに
     
 if __name__ == '__main__':
+    import time
+    t1 = time.time()
     print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))
     

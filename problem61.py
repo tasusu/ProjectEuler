@@ -65,4 +65,8 @@ if __name__ == '__main__':
 #test
 #    for i in range(3,9):
 #        print([P(i,n) for n in range(1,6)])
+    import time
+    t1 = time.time()
     print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))

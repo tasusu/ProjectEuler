@@ -24,7 +24,7 @@ def is_clique(tpl, adj):
         if not q in adj[p]: return False
     return True
 
-def main(max_):
+def main(max_ = 30000):
     # 各素数に対応する点の次数を管理して、次数が5未満の点は切り捨てたほうが良いかも.
     ans = []
     primes = intlib.primes(max_)
@@ -57,4 +57,8 @@ def main(max_):
     if ans < max_: return ans #答えが確定する場合に返す
     
 if __name__ == '__main__':
-    print(main(30000)) 
+    import time
+    t1 = time.time()
+    print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))

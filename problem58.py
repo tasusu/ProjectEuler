@@ -20,4 +20,8 @@ def main():
         if r < 0.1: return 2*i + 3
 
 if __name__ == '__main__':
+    import time
+    t1 = time.time()
     print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))

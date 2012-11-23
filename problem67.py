@@ -3,8 +3,8 @@ Problem 67
 https://projecteuler.net/index.php?section=problems&id=67
 '''
 
-if __name__ == '__main__':
-    s = open('triangle.txt').read()
+def main():
+    s = open('src/triangle.txt').read()
     
     a = [[int(n) for n in line.split()] for line in s.splitlines()]
     d = [[0] * len(a) for j in range(len(a))]
@@ -19,4 +19,12 @@ if __name__ == '__main__':
                 tmp.append(d[i - 1][j])
             d[i][j] = a[i][j] + max(tmp)
     
-    print(max(d[-1]))
+    return max(d[-1])
+    
+
+if __name__ == '__main__':
+    import time
+    t1 = time.time()
+    print(main())
+    t2 = time.time()
+    print('{:.3f} s'.format(t2-t1))
