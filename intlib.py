@@ -140,6 +140,28 @@ def prime_factors(n):
             n = n // p
     return ans
 
+def phi(n, factors):
+    'nとnの素因数factorsに対し, オイラーのφ関数φ(n)を計算する.'
+    numer= 1
+    denom = 1
+    for p in factors:
+        numer *= (p - 1)
+        denom *= p
+    return (numer*n)//denom
+
+def make_factors_dict(n):
+    '素因数の辞書を作る.'
+    factors_dict = defaultdict(set)
+    s = [True] * n
+    for x in range(2, n):
+        if s[x]:
+            factors_dict[x].add(x)
+            for i in range(x + x, len(s), x):
+                s[i] = False
+                factors_dict[i].add(x)
+            
+    return factors_dict
+
 class Primes:
     '''Primes クラス.　1<=n<=max_ までの範囲の素数判定・素因数列挙・素数列挙を
         高速に行う. 範囲を超える数に対しては例外を発生させる.
