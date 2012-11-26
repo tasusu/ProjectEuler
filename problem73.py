@@ -3,7 +3,7 @@ How many fractions lie between 1/3 and 1/2 in a
 sorted set of reduced proper fractions?
 '''
 
-from fractions import Fraction, gcd
+from fractions import gcd
 import math
 
 def main():
@@ -16,7 +16,7 @@ def main():
         lo = math.ceil(d/3)
         hi = math.floor(d/2)
         ans += sum((1 for n in range(lo, hi+1)
-                     if 1/3 < n/d < 1/2 and gcd(n, d) == 1))    
+                     if 1/3 < n/d < 1/2 and gcd(n, d) == 1))
     return ans
 
 if __name__ == '__main__':
