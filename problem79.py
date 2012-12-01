@@ -13,7 +13,7 @@ def check_password(password, attempt):
     hi = len(password) - password[::-1].find(c)
     if lo < 0 or hi > len(password):
         return False
-    for i in range(lo, hi):
+    for i in range(lo + 1, hi):
         if password[i] == b:
             return True
     return False
@@ -24,7 +24,7 @@ def main():
         attempts = [row.rstrip() for row in f]
 
     for length in itertools.count(8):
-        for tpl in itertools.product('01236789', repeat=length):
+        for tpl in itertools.permutations('01236789', length):
             password = ''.join(tpl)
             if all((check_password(password, attempt)
                     for attempt in attempts)):
