@@ -1,5 +1,5 @@
 '''
-problem description
+Calculating the digital sum of the decimal digits of irrational square roots.
 '''
 
 import decimal
