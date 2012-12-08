@@ -1,5 +1,5 @@
 '''
-problem description
+Investigating the number of rectangles in a rectangular grid.
 '''
 
 
