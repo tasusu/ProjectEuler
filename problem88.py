@@ -2,41 +2,37 @@
 Exploring minimal product-sum numbers for sets of different sizes.
 '''
 
-import itertools
+
+def prod(iterable):
+    ans = 1
+    for a in iterable:
+        ans *= a
+    return ans
 
 
-def product_sum(n, k):
+def gen_product_sum(lo, hi, k):
     '''
-    nがk個のproduct_sumで書けるか
+    lo <= a1 * ... * ak <= hi となる[a1, ..., ak]を順番に返す.
     '''
-    return _product_sum(n, n, k)
+    if k == 1:
+        for d in range(lo, hi + 1):
+            yield [d]
 
-
-def _product_sum(n, target, k):
-    '''
-    targetがnのk個への因子分解の因子和で書けるか
-    '''
-    if target < 0:
-        return False
-
-    if n == 1:
-        return target == k
-
-    for d in range(2, n + 1):
-        if n % d == 0 and _product_sum(n // d, target - d, k - 1):
-            return True
-
-    return False
+    for d in range(lo, hi + 1):
+        for seq in gen_product_sum(d, hi // d, k - 1):
+            yield [d] + seq
 
 
 def main():
-    ans = set()
-    for k in range(2, 12001):
-        for n in itertools.count(k):
-            if product_sum(n, k):
-                ans.add(n)
-                break
-    return sum(ans), len(ans)
+    ans = {}
+    for prod_len in range(2, 16):
+        for a in gen_product_sum(2, 24000, prod_len):
+            n = prod(a)
+            k = len(a) + n - sum(a)
+            if n < ans.get(k, float('inf')) and k <= 12000:
+                ans[k] = n
+
+    return sum({v for v in ans.values()})
 
 if __name__ == '__main__':
     import time
