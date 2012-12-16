@@ -32,7 +32,7 @@ def main():
             if n < ans.get(k, float('inf')) and k <= 12000:
                 ans[k] = n
 
-    return sum({v for v in ans.values()})
+    return sum(set(ans.values()))
 
 if __name__ == '__main__':
     import time
